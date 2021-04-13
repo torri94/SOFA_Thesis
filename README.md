@@ -24,13 +24,17 @@ Contiene le mesh da me prodotte, vanno salvate dentro la cartella  C:\--\Sofa\sr
 
 **Componenti**
 
-*GeomagicDriver.cpp* e *GeomagicDriver.h* va sostituita all'interno del plugin Geomagic ( C:\--\Sofa\src\applications\plugins\Geomagic\src\Geomagic) 
+*GeomagicDriver.cpp* e *GeomagicDriver.h* 
+va sostituita all'interno del plugin Geomagic ( C:\--\Sofa\src\applications\plugins\Geomagic\src\Geomagic) 
 In questa componente ho implementato l'invio del segnale quando viene schiacciato un qualsiasi tasto del Phantom Omni
-*EvalPointsDistance.* vanno sovrascritte in C:\--\Sofa\src\modules\SofaValidation\src\SofaValidation
+*EvalPointsDistance.*
+vanno sovrascritte in C:\--\Sofa\src\modules\SofaValidation\src\SofaValidation
 è la creazione del segnale di avvio della simulazione e stampano i tempi in un file
-*Monitor.* vanno sovrascritti in C:\--\Sofa\src\modules\SofaValidation\src\SofaValidation
+*Monitor.*
+vanno sovrascritti in C:\--\Sofa\src\modules\SofaValidation\src\SofaValidation
 Ho aggiunto delle nuove informazioni nel file stampati
-*ExtraMonitor.* vanno sovrascritti in C:\--\Sofa\src\modules\SofaValidation\src\SofaValidation
+*ExtraMonitor.*
+vanno sovrascritti in C:\--\Sofa\src\modules\SofaValidation\src\SofaValidation
 Ho aggiunto delle nuove informazioni nel file stampati
 
 
