@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<Node name="root" dt="0.01" gravity="0 0 0 ">
+	
+	
+	<RequiredPlugin name="SofaOpenglVisual"/>
+	<RequiredPlugin pluginName="Dani"/>
+	<RequiredPlugin pluginName='SofaHaptics'/>
+	<RequiredPlugin pluginName='SofaSparseSolver'/>
+	<RequiredPlugin pluginName='SofaValidation'/>
+	<VisualStyle displayFlags="hideBehaviorModels hideCollisionModels hideMappings hideForceFields " />
+	<RequiredPlugin name="Geomagic plugin" pluginName="Geomagic" />
+    <OglViewport screenPosition="0 0" screenSize="250 250" cameraPosition="-0.00322233 -20.3537 18.828" cameraOrientation="0.418151 -6.26277e-06 -0.000108372 0.908378"/>
+	<ViewerSetting fullscreen="true"/>
+	
+    <DefaultPipeline name="pipeline" depth="6" verbose="0"/>
+    <BruteForceDetection name="detection" />
+    <DefaultContactManager name="response" response="FrictionContact" />
+    <LocalMinDistance name="proximity" alarmDistance="1" contactDistance="0.1" angleCone="0.0" />
+	<FreeMotionAnimationLoop/>
+	<LCPConstraintSolver tolerance="0.001" maxIt="1000"/>
+	<GeomagicDriver name="GeomagicDevice" deviceName="Default Device" scale="1" drawDeviceFrame="0" positionBase="0 0 8" drawDevice="0" orientationBase="0.707 0 0 0.707" button_1="1" button_2="2" emitButtonEvent="true" />
+
+
+	<Node name="Mesh">
+        <RegularGridTopology name="Grid" nx="2" ny="1" nz="2" xmin="-1.25" xmax="0.75" ymin="7" ymax="8" zmin="3" zmax="5"  />
+        <MechanicalObject name="MO" />
+    </Node>
+
+    <Node name="Simulation">
+        <EulerImplicitSolver name="cg_odesolver" printLog="false"  rayleighStiffness="0.1" rayleighMass="0.1" />
+        <CGLinearSolver iterations="25" name="linear solver" tolerance="1.0e-9" threshold="1.0e-9" />
+        <RegularGridTopology src="@/Mesh/Grid"  />
+        <MechanicalObject />
+        <EvalPointsDistance name="dist" object1="@/Mesh/MO" object2="@." listening="true" period="0.25" draw="false" ID="1"/>
+
+        <Node name="Data">
+            <DataDisplay pointData="@../dist.distance" />
+            <ColorMap colorScheme="Blue to Red" />		
+            <IdentityMapping input="@.." output="@."/>
+        </Node>
+    </Node>
+		
+
+</Node>
+
+
+

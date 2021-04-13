@@ -1,0 +1,53 @@
+<?xml version="1.0" ?>
+<Node name="root" dt="0.1" gravity="0 0 -9.81 " >
+    <RequiredPlugin name="SofaOpenglVisual"/>
+    <RequiredPlugin pluginName='SofaHaptics'/>
+	<RequiredPlugin pluginName='SofaSparseSolver'/>
+    <VisualStyle displayFlags="hideBehaviorModels hideCollisionModels hideMappings hideForceFields" />
+    <RequiredPlugin name="Geomagic plugin" pluginName="Geomagic" />
+    
+    <DefaultPipeline name="pipeline" depth="6" verbose="0"/>
+    <BruteForceDetection name="detection" />
+    <DefaultContactManager name="response" response="FrictionContact" />
+    <LocalMinDistance name="proximity" alarmDistance="0.15" contactDistance="0.05" angleCone="0.0" />
+
+	<Node name="CubeStatic1Left">
+		<MeshObjLoader name="loaderC" filename="mesh/cube.obj" scale3d="1 8 4" translation="-6 0 5" />
+		<MechanicalObject name="Cube"  position="@loaderC.position" />
+		<MeshTopology name="grid" src="@loaderC" />
+		<TriangleCollisionModel simulated="0" moving="0" bothSide="false" group="1"/>
+		<LineCollisionModel simulated="0" moving="0" group="1"/>
+		<PointCollisionModel simulated="0" moving="0" group="1"/>
+		<Node name="CubeVisu">
+			<OglModel name="CubeVisualModel"/>
+			<IdentityMapping input="@../" output="@CubeVisualModel" />
+		</Node>
+	</Node>
+
+	<Node name="CubeStatic1Right">
+		<MeshObjLoader name="loaderC" filename="mesh/cube.obj" scale3d="1 8 4" translation="6 0 5" />
+		<MechanicalObject name="Cube"  position="@loaderC.position" />
+		<MeshTopology name="grid" src="@loaderC" />
+		<TriangleCollisionModel simulated="0" moving="0" bothSide="false" group="1"/>
+		<LineCollisionModel simulated="0" moving="0" group="1"/>
+		<PointCollisionModel simulated="0" moving="0" group="1"/>
+		<Node name="CubeVisu">
+			<OglModel name="CubeVisualModel"/>
+			<IdentityMapping input="@../" output="@CubeVisualModel" />
+		</Node>
+	</Node>
+
+	<Node name="CubeStatic1Front">
+		<MeshObjLoader name="loaderC" filename="mesh/cube.obj" scale3d="6 0.5 4" translation="0 5 5" />
+		<MechanicalObject name="Cube"  position="@loaderC.position" />
+		<MeshTopology name="grid" src="@loaderC" />
+		<TriangleCollisionModel simulated="0" moving="0" bothSide="false" group="1"/>
+		<LineCollisionModel simulated="0" moving="0" group="1"/>
+		<PointCollisionModel simulated="0" moving="0" group="1"/>
+		<Node name="CubeVisu">
+			<OglModel name="CubeVisualModel"/>
+			<IdentityMapping input="@../" output="@CubeVisualModel" />
+		</Node>
+	</Node>
+	
+</Node>

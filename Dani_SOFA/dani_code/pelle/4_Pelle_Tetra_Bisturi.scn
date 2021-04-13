@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<Node name="root" dt="0.3" gravity="0 0 -9.81 " >
+	<RequiredPlugin name="SofaOpenglVisual"/>
+	<RequiredPlugin pluginName='SofaHaptics'/>
+	<RequiredPlugin pluginName='SofaSparseSolver'/>
+	<VisualStyle displayFlags="hideBehaviorModels hideCollisionModels hideMappings hideForceFields showBehavior" />
+	<RequiredPlugin name="Geomagic plugin" pluginName="Geomagic" />
+
+	<DefaultPipeline name="pipeline" depth="6" verbose="0"/>
+	<BruteForceDetection name="detection" />
+	<DefaultContactManager name="response" response="FrictionContact" />
+	<LocalMinDistance name="proximity" alarmDistance="2.5" contactDistance="0.1" angleCone="0.0" />
+	<FreeMotionAnimationLoop/>
+	<LCPConstraintSolver tolerance="0.001" maxIt="1000"/>
+	<GeomagicDriver name="GeomagicDevice" deviceName="Default Device" scale="1" drawDeviceFrame="0" positionBase="0 0 8" drawDevice="0" orientationBase="0.707 0 0 0.707"  />
+
+	<Node name="Hexahedra Mesh">
+		<EulerImplicitSolver rayleighMass="0.01" rayleighStiffness="0.1" />
+		<SparseLDLSolver />
+
+		<MeshGmshLoader name="loader" filename="mesh/porco.msh" />
+		<MechanicalObject  name="Volume" src="@loader" scale3d="10 4 5" translation="-25 -9 0" />
+
+		<TetrahedronSetTopologyContainer name="Container" filename="mesh/porco.msh" tetrahedra="@loader.tetrahedra" />
+		<TetrahedronSetGeometryAlgorithms  name="GeomAlgo" />
+
+		<DiagonalMass template="Vec3d" name="Mass" massDensity="2.0" />
+		<TetrahedralCorotationalFEMForceField name="FEM" method="large" poissonRatio="0.45" youngModulus="2000"/>
+		<LinearSolverConstraintCorrection />
+
+		<FixedConstraint template="Vec3d" name="Fixed Dofs" indices="0 4 10 14 20 24 30 34 40 44 50 54 60 64 70 74 80 84 90 94 100 104 110 114 120 124 130 134 140 144 150 154 160 164 170 174 180 184 190 194 200 204 210 214 220 224 230 234 240 244 250 254 260 264 270 274 280 284 290 294 300 304 310 314 320 324 330 334 340 344 350 354 360 364 370 374 380 384 390 394 400 404 410 414 420 424 430 434 440 444" drawSize="1" />
+		<!--<FixedPlaneConstraint template="Vec3d" name="Plane" direction="0 0 1" d="0"/>-->
+		<!--<PlaneForceField template="Vec3d" name="Plane" normal="0 0 1"  d="-1" />-->
+
+		<Node name="Triangles Mesh">
+			<TriangleSetTopologyContainer name="Container" />
+			<TriangleSetTopologyModifier name="Modifier" />
+			<TriangleSetTopologyAlgorithms  name="TopoAlgo" />
+			<TriangleSetGeometryAlgorithms  name="GeomAlgo" />
+			<Tetra2TriangleTopologicalMapping name="Mapping" input="@../Container" output="@Container" />
+			<TriangularBendingSprings  name="FEM-Bend" stiffness="0.1" damping="1" />
+			<TriangleCollisionModel name="Models" />
+			<Node name="Visu">
+				<OglModel template="ExtVec3f" name="Visual" color="1 0.75 0.796" material="Default Diffuse 1 0 0 1 1 Ambient 1 0 0 0.2 1 Specular 0 0 0 1 1 Emissive 0 0 0 1 1 Shininess 0 45 "/>
+				<IdentityMapping template="Vec3d,ExtVec3f" name="default12" input="@.." output="@Visual" />
+			</Node>
+		</Node>
+	</Node>
+	<Node name="Omni">
+		<MechanicalObject template="Rigid3" name="DOFs" position="@GeomagicDevice.positionDevice"/>
+		<MechanicalStateController template="Rigid3" listening="true" mainDirection="-1.0 0.0 0.0" handleEventTriggersUpdate="true"/>
+	</Node>
+
+	<Node name="Instrument" >
+		<EulerImplicitSolver name="ODE solver" rayleighStiffness="0.01" rayleighMass="0.01" />
+		<SparseLDLSolver />
+
+		<MechanicalObject name="instrumentState" template="Rigid3" />
+		<UniformMass name="mass" totalMass="0.5" />
+
+		<RestShapeSpringsForceField stiffness='1000' angularStiffness='1000' external_rest_shape='@../Omni/DOFs' points='0' external_points='0'/>
+		<LCPForceFeedback name="LCPFF1" activate="true" forceCoef="0.01"/>
+		<LinearSolverConstraintCorrection />
+
+		<Node name="VisuTool" >
+			<MeshSTLLoader name="STLLoader" filename="mesh/Scalpel.stl" scale="0.1" printLog="true" flipNormals="0" />
+			<OglModel name="InstrumentVisualModel" src="@STLLoader"  rx="0" ry="-90" rz="90"  dz="1.3" dx="0" dy="0.35"/>
+			<RigidMapping name="MM->VM mapping" input="@instrumentState" output="@InstrumentVisualModel" />
+		</Node>
+
+		<Node name="CollisionModel" >
+			<Node name="Scalple">
+				<MeshSTLLoader name="STLLoader" filename="mesh/Scalpel.stl" scale="0.1" printLog="true" flipNormals="0" />
+				<MeshTopology src="@STLLoader" name="InstrumentCollisionModel" />
+				<MechanicalObject src="@STLLoader" name="instrumentCollisionState"  rx="0" ry="-90" rz="90" dz="1.3" dx="0" dy="0.35"/>
+				<LineCollisionModel contactStiffness="0.1" group="1" simulated="0" moving="1"/>
+				<PointCollisionModel contactStiffness="0.1" group="1" simulated="0" moving="1"/>
+				<TriangleCollisionModel template="Vec3d" name="Triangles" />
+				<RigidMapping name="MM->CM mapping" input="@instrumentState" output="@instrumentCollisionState" />
+			</Node>
+
+		</Node>
+	</Node>
+</Node>
